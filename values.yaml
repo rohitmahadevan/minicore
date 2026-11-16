@@ -1,0 +1,24 @@
+common:
+  domain: "" # required: render must fail if empty
+  region_name: "" # optional fallback for every cluster
+  web:
+    enabled_default: false
+    image: nginx:1.27
+    replicas: 2
+    pod_anti_affinity: none # one of: required, preferred, none
+
+clusters:
+  mothership:
+    enabled: true
+    region_name: "" # optional; beats common.region_name; final default "global"
+    web:
+      enabled: true
+  edge:
+    enabled: true
+    web:
+      replicas: 3
+      pod_anti_affinity: preferred
+  lab:
+    enabled: false
+    web:
+      enabled: true
