@@ -1,0 +1,3 @@
+{{- range $n, $c := .Values.clusters }}
+# {{ $n }}: [{{ include "minicore.lib.webEnabled" (list $ $c) }}]
+{{- end }}
