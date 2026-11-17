@@ -12,13 +12,13 @@ It only renders plain Kubernetes objects, so everything can be tested with
 
 | Requirement | Description | State |
 |---|---|---|
-| R1 | One Deployment + Service per enabled cluster entry | helper done, `web.yaml` next |
+| R1 | One Deployment + Service per enabled cluster entry | done |
 | R2 | Names `{release}-{cluster}-web` | to do |
 | R3 | Settings from the cluster's `web`, then `common.web` | to do |
 | R4 | `minicore/host: web.<region>.<domain>` annotation via `minicore.lib.regionName` | to do |
 | R5 | `minicore.lib.domain`: fail on empty `common.domain` or old `common.cluster_domain` | to do |
 | R6 | `minicore.lib.podAntiAffinity`: `required` / `preferred` / `none` | to do |
-| R7 | Helpers in `_helpers.tpl`, loop in `web.yaml`, root saved as `$global` | in progress |
+| R7 | Helpers in `_helpers.tpl`, loop in `web.yaml`, root saved as `$global` | done so far |
 
 ## Layout
 
@@ -27,7 +27,7 @@ Chart.yaml
 values.yaml               common settings + one entry per cluster
 templates/
   _helpers.tpl            minicore.lib.* helpers
-  probe.yaml              temporary: prints each helper answer as a YAML comment
+  web.yaml                loops over clusters; Deployment + Service where web is enabled
 ```
 
 ## Values
@@ -68,12 +68,20 @@ An explicit `false` must beat the default, so the helper uses `hasKey` and
 
 ## Trying it
 
+Each command lists the objects rendered, from inside the chart folder:
+
 ```
-helm template demo . --set common.domain=kind.test
-helm template demo . --set common.domain=kind.test --set common.web.enabled_default=true
-helm template demo . --set common.domain=kind.test --set common.web.enabled_default=true --set clusters.mothership.web.enabled=false
-helm template demo . --set common.domain=kind.test --set common.web.enabled_default=true --set clusters.edge.web.enabled=null
+helm template demo . --set common.domain=kind.test | grep -E '^kind:|^  name:'
+helm template demo . --set common.domain=kind.test --set common.web.enabled_default=true | grep -E '^kind:|^  name:'
+helm template demo . --set common.domain=kind.test --set common.web.enabled_default=true --set clusters.mothership.web.enabled=false | grep -E '^kind:|^  name:'
+helm template demo . --set common.domain=kind.test --set common.web.enabled_default=true --set clusters.edge.web.enabled=null | grep -E '^kind:|^  name:'
 ```
 
-While `templates/probe.yaml` exists, each run prints one line per cluster,
-for example `# mothership: [true]`.
+| Case | Objects |
+|---|---|
+| defaults | `mothership-web` |
+| `enabled_default=true` | `edge-web`, `mothership-web` |
+| default true, mothership `false` | `edge-web` |
+| default true, edge `null` | `edge-web`, `mothership-web` |
+
+Each name appears twice: one Deployment and one Service.

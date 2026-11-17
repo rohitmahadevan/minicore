@@ -1,0 +1,38 @@
+{{- $global := . -}}
+{{- range $name, $cluster := $global.Values.clusters -}}
+{{- if include "minicore.lib.webEnabled" (list $global $cluster) }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}-web
+spec:
+  replicas: {{ $global.Values.common.web.replicas }}
+  selector:
+    matchLabels:
+      app: {{ $name }}-web
+  template:
+    metadata:
+      labels:
+        app: {{ $name }}-web
+    spec:
+      containers:
+        - name: web
+          image: {{ $global.Values.common.web.image | quote }}
+          ports:
+            - name: http
+              containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}-web
+spec:
+  selector:
+    app: {{ $name }}-web
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+{{- end }}
+{{- end }}
