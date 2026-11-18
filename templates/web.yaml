@@ -1,13 +1,17 @@
 {{- $global := . -}}
 {{- range $name, $cluster := $global.Values.clusters -}}
 {{- if include "minicore.lib.webEnabled" (list $global $cluster) }}
+  {{- $replicas := $global.Values.common.web.replicas -}}
+  {{- if and (hasKey $cluster.web "replicas") (not (kindIs "invalid" $cluster.web.replicas)) -}}
+    {{- $replicas = $cluster.web.replicas -}}
+  {{- end }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ $global.Release.Name }}-{{ $name }}-web
 spec:
-  replicas: {{ $global.Values.common.web.replicas }}
+  replicas: {{ $replicas }}
   selector:
     matchLabels:
       app: {{ $global.Release.Name }}-{{ $name }}-web
@@ -18,7 +22,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: {{ $global.Values.common.web.image | quote }}
+          image: {{ $cluster.web.image | default $global.Values.common.web.image | quote }}
           ports:
             - name: http
               containerPort: 80
