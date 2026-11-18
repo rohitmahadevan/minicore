@@ -52,7 +52,9 @@ clusters:
 
 ## `minicore.lib.webEnabled`
 
-Called as `include "minicore.lib.webEnabled" (list $global $cluster)`.
+Called as `include "minicore.lib.webEnabled" (list $global $cluster)`, where
+`$cluster` is the cluster's map from the `range` in `web.yaml`.
+`minicore.lib.regionName` is called the same way.
 Returns the string `true`, or an empty string.
 
 | Cluster `enabled` | Has `web` | `web.enabled` | Result |

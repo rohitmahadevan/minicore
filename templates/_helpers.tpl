@@ -12,6 +12,6 @@
 
 {{- define "minicore.lib.regionName" -}}
 {{- $global := index . 0 -}}
-{{- $cluster := index $global.Values.clusters (index . 1) -}}
+{{- $cluster := index . 1 -}}
 {{- $cluster.region_name | default $global.Values.common.region_name | default "global" -}}
 {{- end -}}
