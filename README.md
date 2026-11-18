@@ -13,7 +13,7 @@ It only renders plain Kubernetes objects, so everything can be tested with
 | Requirement | Description | State |
 |---|---|---|
 | R1 | One Deployment + Service per enabled cluster entry | done |
-| R2 | Names `{release}-{cluster}-web` | to do |
+| R2 | Names `{release}-{cluster}-web` | done |
 | R3 | Settings from the cluster's `web`, then `common.web` | to do |
 | R4 | `minicore/host: web.<region>.<domain>` annotation via `minicore.lib.regionName` | to do |
 | R5 | `minicore.lib.domain`: fail on empty `common.domain` or old `common.cluster_domain` | to do |
@@ -79,9 +79,9 @@ helm template demo . --set common.domain=kind.test --set common.web.enabled_defa
 
 | Case | Objects |
 |---|---|
-| defaults | `mothership-web` |
-| `enabled_default=true` | `edge-web`, `mothership-web` |
-| default true, mothership `false` | `edge-web` |
-| default true, edge `null` | `edge-web`, `mothership-web` |
+| defaults | `demo-mothership-web` |
+| `enabled_default=true` | `demo-edge-web`, `demo-mothership-web` |
+| default true, mothership `false` | `demo-edge-web` |
+| default true, edge `null` | `demo-edge-web`, `demo-mothership-web` |
 
 Each name appears twice: one Deployment and one Service.

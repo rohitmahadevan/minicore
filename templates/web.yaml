@@ -5,16 +5,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ $name }}-web
+  name: {{ $global.Release.Name }}-{{ $name }}-web
 spec:
   replicas: {{ $global.Values.common.web.replicas }}
   selector:
     matchLabels:
-      app: {{ $name }}-web
+      app: {{ $global.Release.Name }}-{{ $name }}-web
   template:
     metadata:
       labels:
-        app: {{ $name }}-web
+        app: {{ $global.Release.Name }}-{{ $name }}-web
     spec:
       containers:
         - name: web
@@ -26,10 +26,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $name }}-web
+  name: {{ $global.Release.Name }}-{{ $name }}-web
 spec:
   selector:
-    app: {{ $name }}-web
+    app: {{ $global.Release.Name }}-{{ $name }}-web
   ports:
     - name: http
       port: 80
