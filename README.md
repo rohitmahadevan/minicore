@@ -15,7 +15,7 @@ It only renders plain Kubernetes objects, so everything can be tested with
 | R1 | One Deployment + Service per enabled cluster entry | done |
 | R2 | Names `{release}-{cluster}-web` | done |
 | R3 | Settings from the cluster's `web`, then `common.web` | done for `replicas` and `image`; `pod_anti_affinity` is used in R6 |
-| R4 | `minicore/host: web.<region>.<domain>` annotation via `minicore.lib.regionName` | to do |
+| R4 | `minicore/host: web.<region>.<domain>` annotation via `minicore.lib.regionName` | done; domain read from `common.domain` until R5 |
 | R5 | `minicore.lib.domain`: fail on empty `common.domain` or old `common.cluster_domain` | to do |
 | R6 | `minicore.lib.podAntiAffinity`: `required` / `preferred` / `none` | to do |
 | R7 | Helpers in `_helpers.tpl`, loop in `web.yaml`, root saved as `$global` | done so far |

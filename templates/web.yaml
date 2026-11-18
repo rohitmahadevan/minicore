@@ -10,6 +10,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ $global.Release.Name }}-{{ $name }}-web
+  annotations:
+    minicore/host: web.{{ include "minicore.lib.regionName" (list $global $name) }}.{{ $global.Values.common.domain }}
 spec:
   replicas: {{ $replicas }}
   selector:
