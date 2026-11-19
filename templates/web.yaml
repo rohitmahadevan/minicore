@@ -11,7 +11,7 @@ kind: Deployment
 metadata:
   name: {{ $global.Release.Name }}-{{ $name }}-web
   annotations:
-    minicore/host: web.{{ include "minicore.lib.regionName" (list $global $cluster) }}.{{ $global.Values.common.domain }}
+    minicore/host: web.{{ include "minicore.lib.regionName" (list $global $cluster) }}.{{ include "minicore.lib.domain" (list $global) }}
 spec:
   replicas: {{ $replicas }}
   selector:
