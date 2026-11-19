@@ -23,3 +23,30 @@
 {{- end -}}
 {{- required "common.domain is empty" $global.Values.common.domain -}}
 {{- end -}}
+
+{{- define "minicore.lib.podAntiAffinity" -}}
+{{- $mode := index . 0 -}}
+{{- $matchLabels := index . 1 -}}
+{{- $replicas := int (index . 2) -}}
+{{- $valuePath := index . 3 -}}
+{{- if not (has $mode (list "required" "preferred" "none")) -}}
+  {{- fail (printf "%s must be one of required, preferred or none, got %q" $valuePath $mode) -}}
+{{- end -}}
+{{- if gt $replicas 1 -}}
+{{- if eq $mode "required" }}
+requiredDuringSchedulingIgnoredDuringExecution:
+  - labelSelector:
+      matchLabels:
+        {{- toYaml $matchLabels | nindent 8 }}
+    topologyKey: kubernetes.io/hostname
+{{- else if eq $mode "preferred" }}
+preferredDuringSchedulingIgnoredDuringExecution:
+  - weight: 100
+    podAffinityTerm:
+      labelSelector:
+        matchLabels:
+          {{- toYaml $matchLabels | nindent 10 }}
+      topologyKey: kubernetes.io/hostname
+{{- end -}}
+{{- end -}}
+{{- end -}}

@@ -5,6 +5,10 @@
   {{- if and (hasKey $cluster.web "replicas") (not (kindIs "invalid" $cluster.web.replicas)) -}}
     {{- $replicas = $cluster.web.replicas -}}
   {{- end }}
+  {{- $mode := $cluster.web.pod_anti_affinity | default $global.Values.common.web.pod_anti_affinity -}}
+  {{- $matchLabels := dict "app" (printf "%s-%s-web" $global.Release.Name $name) -}}
+  {{- $valuePath := printf "clusters.%s.web.pod_anti_affinity" $name -}}
+  {{- $affinity := include "minicore.lib.podAntiAffinity" (list $mode $matchLabels $replicas $valuePath) | trim }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -22,6 +26,11 @@ spec:
       labels:
         app: {{ $global.Release.Name }}-{{ $name }}-web
     spec:
+      {{- if $affinity }}
+      affinity:
+        podAntiAffinity:
+          {{- $affinity | nindent 10 }}
+      {{- end }}
       containers:
         - name: web
           image: {{ $cluster.web.image | default $global.Values.common.web.image | quote }}
